@@ -1,18 +1,17 @@
-# Utiliser l'image de base Ubuntu (dernière version disponible)
 FROM ubuntu:latest
 
-# Mise à jour et installation des outils de base lors de la création de l'image
-RUN apt update && apt upgrade -y && apt install -y bash
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip \
+    net-tools \
+    sudo \
+    && rm -rf /var/lib/apt/lists/*
+#utilisateur mdp : password
+RUN useradd -m -s /bin/bash utilisateur && echo "utilisateur:password" | chpasswd \
+    && usermod -aG sudo utilisateur
 
-# Ajouter un utilisateur avec des privilèges sudo (facultatif)
-RUN useradd -m -s /bin/bash user && echo 'user ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+USER utilisateur
 
-# Définir l'utilisateur par défaut comme root
-USER root
+WORKDIR /home/utilisateur
 
-WORKDIR /root
-
-
-# Définir la commande par défaut à exécuter lors du lancement du conteneur
-#CMD ["bash", "-c", "apt update && apt upgrade -y && tail -f /dev/null"]
 CMD ["bash"]
